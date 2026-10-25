@@ -87,50 +87,49 @@ export default function PlayerDetailPage() {
     return sortAsc ? da - db : db - da
   })
 
-  if (loading) return <p className="text-gray-500">Caricamento...</p>
-  if (error) return <p className="text-red-500">{error}</p>
+  if (loading) return <p className="text-slate-500 dark:text-slate-400 text-sm">Caricamento...</p>
+  if (error) return <p className="text-red-500 text-sm">{error}</p>
 
   return (
     <div>
-      <button onClick={() => navigate(-1)} className="text-blue-700 hover:underline text-sm mb-4 block">
+      <button onClick={() => navigate(-1)} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-sm mb-4 inline-flex items-center gap-1 transition-colors">
         ← Torna alla partita
       </button>
 
-      <h1 className="text-2xl font-bold mb-1">{playerName}</h1>
-      <p className="text-gray-500 text-sm mb-6">{rows.length} presenze</p>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight mb-1">{playerName}</h1>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">{rows.length} presenze</p>
 
-      {rows.length === 0 && <p className="text-gray-500">Nessuna statistica trovata.</p>}
+      {rows.length === 0 && <p className="text-slate-500 dark:text-slate-400 text-sm">Nessuna statistica trovata.</p>}
 
       {rows.length > 0 && (
-        <div className="rounded border border-gray-200 overflow-auto max-h-[75vh]">
+        <div className="rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm overflow-auto max-h-[75vh]">
           <table className="text-xs min-w-max">
-            <thead className="bg-blue-800 text-white">
+            <thead className="bg-slate-800 text-white">
               <tr>
                 <th
                   ref={el => { headerRefs.current[0] = el }}
-                  className="px-2 py-2 text-left whitespace-nowrap bg-blue-800 sticky top-0 z-30 cursor-pointer select-none"
+                  className="px-2 py-2 text-left whitespace-nowrap text-xs font-semibold uppercase tracking-wider bg-slate-700 sticky top-0 z-30 cursor-pointer select-none"
                   style={getStickyStyle(0)}
                   onClick={() => setSortAsc(v => !v)}
                 >
                   Data {sortAsc ? '↑' : '↓'}
                 </th>
-                <th ref={el => { headerRefs.current[1] = el }} className="px-2 py-2 text-left whitespace-nowrap bg-blue-800 sticky top-0 z-30" style={getStickyStyle(1)}>Partita</th>
-                <th className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">Tit</th>
-                <th className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">#</th>
+                <th ref={el => { headerRefs.current[1] = el }} className="px-2 py-2 text-left whitespace-nowrap text-xs font-semibold uppercase tracking-wider bg-slate-700 sticky top-0 z-30" style={getStickyStyle(1)}>Partita</th>
+                <th className="px-2 py-2 text-center whitespace-nowrap text-xs font-semibold uppercase tracking-wider sticky top-0 z-20 bg-slate-700">Tit</th>
+                <th className="px-2 py-2 text-center whitespace-nowrap text-xs font-semibold uppercase tracking-wider sticky top-0 z-20 bg-slate-700">#</th>
                 {STAT_COLS.map(col => (
-                  <th key={col.key} className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">{col.label}</th>
+                  <th key={col.key} className="px-2 py-2 text-center whitespace-nowrap text-xs font-semibold uppercase tracking-wider sticky top-0 z-20 bg-slate-700">{col.label}</th>
                 ))}
               </tr>
             </thead>
-            <tbody>
-              {sortedRows.map((row, i) => {
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+              {sortedRows.map((row) => {
                 const isHovered = hoveredRow === row.id
-                const baseBg = i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                const stickyBg = isHovered ? 'bg-yellow-100' : baseBg
+                const stickyBg = isHovered ? 'bg-amber-50 dark:bg-slate-700' : 'bg-white dark:bg-slate-900'
                 return (
                 <tr
                   key={row.id}
-                  className={`cursor-pointer ${isHovered ? 'bg-yellow-100' : baseBg}`}
+                  className={`cursor-pointer ${isHovered ? 'bg-amber-50 dark:bg-slate-700' : 'bg-white dark:bg-slate-900'}`}
                   onClick={() => navigate(`/games/${row.game.id}`)}
                   onMouseEnter={() => setHoveredRow(row.id)}
                   onMouseLeave={() => setHoveredRow(null)}

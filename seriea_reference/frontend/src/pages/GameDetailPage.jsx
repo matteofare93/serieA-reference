@@ -89,47 +89,52 @@ export default function GameDetailPage() {
   const getStickyStyle = (colIndex) =>
     stickyLefts[colIndex] !== undefined ? { left: stickyLefts[colIndex] } : {}
 
-  if (loading) return <p className="text-gray-500">Caricamento...</p>
-  if (error) return <p className="text-red-500">{error}</p>
+  if (loading) return <p className="text-slate-500 dark:text-slate-400 text-sm">Caricamento...</p>
+  if (error) return <p className="text-red-500 text-sm">{error}</p>
 
   return (
     <div>
-      <button onClick={() => navigate(-1)} className="text-blue-700 hover:underline text-sm mb-4 block">
+      <button onClick={() => navigate(-1)} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-sm mb-4 inline-flex items-center gap-1 transition-colors">
         ← Torna alla lista
       </button>
 
       {game && (
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">
-            {game.home_team} <span className="text-blue-700">{game.score}</span> {game.away_team}
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">{game.season} — {game.matchday} - {formatDate(game.game_date)}</p>
+        <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm px-6 py-5">
+          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">
+            {game.season} &mdash; {game.matchday}
+          </p>
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{game.home_team}</span>
+            <span className="text-2xl font-black text-orange-500 min-w-[4rem] text-center">{game.score}</span>
+            <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{game.away_team}</span>
+          </div>
+          <p className="text-slate-400 dark:text-slate-500 text-xs mt-2">{formatDate(game.game_date)}</p>
         </div>
       )}
 
-      {details.length === 0 && <p className="text-gray-500">Nessuna statistica disponibile.</p>}
+      {details.length === 0 && <p className="text-slate-500 dark:text-slate-400 text-sm">Nessuna statistica disponibile.</p>}
 
       {details.length > 0 && (
-        <div className="overflow-x-auto rounded border border-gray-200">
+        <div className="overflow-x-auto rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
           <table className="text-xs min-w-max">
-            <thead className="bg-blue-800 text-white">
+            <thead className="bg-slate-700 text-white">
               <tr>
                 {STAT_COLS.map((col, ci) => (
                   <th
                     key={col.key}
                     ref={col.sticky ? el => { headerRefs.current[ci] = el } : null}
-                    className={`px-2 py-2 text-center whitespace-nowrap bg-blue-800 ${col.sticky ? STICKY : ''}`}
+                    className={`px-2 py-2 text-center whitespace-nowrap text-xs font-semibold uppercase tracking-wider bg-slate-700 ${col.sticky ? STICKY : ''}`}
                     style={col.sticky ? getStickyStyle(ci) : {}}
                   >{col.label}</th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {details.map((row, i) => {
                 const isTotals = row.player === 'Totali'
                 const isHovered = hoveredRow === row.id
-                const baseBg = isTotals ? 'bg-gray-300' : i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                const rowClass = `${isTotals ? 'font-bold' : ''} ${isHovered ? 'bg-yellow-100' : baseBg}`
+                const baseBg = isTotals ? 'bg-slate-100 dark:bg-slate-700' : 'bg-white dark:bg-slate-900'
+                const rowClass = `${isTotals ? 'font-bold' : ''} ${isHovered ? 'bg-amber-50 dark:bg-slate-700' : baseBg}`
                 return (
                 <tr
                   key={row.id}
@@ -139,7 +144,7 @@ export default function GameDetailPage() {
                 >
                   {STAT_COLS.map((col, ci) => {
                     const isSpecialRow = row.player === 'Totali' || row.player === 'Squadra'
-                    const stickyBg = isHovered ? 'bg-yellow-100' : isTotals ? 'bg-gray-300' : i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    const stickyBg = isHovered ? 'bg-amber-50 dark:bg-slate-700' : isTotals ? 'bg-slate-100 dark:bg-slate-700' : 'bg-white dark:bg-slate-900'
                     return (
                     <td key={col.key}
                       className={`px-2 py-1 text-center whitespace-nowrap ${col.sticky ? `${STICKY} ${stickyBg}` : ''}`}
@@ -148,7 +153,7 @@ export default function GameDetailPage() {
                       {col.isPlayer && !isSpecialRow ? (
                         <Link
                           to={`/players/${encodeURIComponent(row.player)}`}
-                          className="text-blue-700 hover:underline font-medium"
+                          className="text-orange-600 dark:text-orange-400 hover:text-orange-800 dark:hover:text-orange-300 hover:underline font-medium"
                         >
                           {row.player}
                         </Link>

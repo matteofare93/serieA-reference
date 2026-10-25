@@ -80,55 +80,61 @@ export default function GamesPage() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-4">
-        <button onClick={() => navigate('/')} className="text-blue-700 hover:underline text-sm">← Nuova ricerca</button>
-        <h1 className="text-xl font-bold">{subtitle}</h1>
-        <span className="text-gray-400 text-sm">{loading ? '' : `${games.length} partite`}</span>
+      <div className="mb-6">
+        <button onClick={() => navigate('/')} className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-sm mb-3 inline-flex items-center gap-1 transition-colors">
+          ← Nuova ricerca
+        </button>
+        <div className="flex items-baseline gap-3">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{subtitle}</h1>
+          {!loading && (
+            <span className="text-sm text-slate-400 dark:text-slate-500">{games.length} partite</span>
+          )}
+        </div>
       </div>
 
-      {loading && <p className="text-gray-500">Caricamento...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {loading && <p className="text-slate-500 dark:text-slate-400 text-sm">Caricamento...</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       {!loading && !error && games.length === 0 && (
-        <p className="text-gray-500">Nessuna partita trovata.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">Nessuna partita trovata.</p>
       )}
 
       {!loading && games.length > 0 && (
-        <div className="overflow-x-auto rounded border border-gray-200">
+        <div className="rounded-xl overflow-auto max-h-[75vh] ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
           <table className="min-w-full text-sm">
-            <thead className="bg-blue-800 text-white">
+            <thead className="bg-slate-700 text-white sticky top-0 z-10">
               <tr>
                 <th
-                  className="px-3 py-2 text-left cursor-pointer select-none hover:bg-blue-700"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer select-none hover:bg-slate-700 transition-colors"
                   onClick={() => handleSort('season')}
                 >
                   Stagione<SortIcon field="season" sortField={sortField} sortDir={sortDir} />
                 </th>
-                <th className="px-3 py-2 text-left">Giornata</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Giornata</th>
                 <th
-                  className="px-3 py-2 text-left cursor-pointer select-none hover:bg-blue-700"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider cursor-pointer select-none hover:bg-slate-700 transition-colors"
                   onClick={() => handleSort('game_date')}
                 >
                   Data<SortIcon field="game_date" sortField={sortField} sortDir={sortDir} />
                 </th>
-                <th className="px-3 py-2 text-left">Squadra di Casa</th>
-                <th className="px-3 py-2 text-center">Risultato</th>
-                <th className="px-3 py-2 text-left">Squadra Ospite</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Squadra di Casa</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">Risultato</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Squadra Ospite</th>
               </tr>
             </thead>
-            <tbody>
-              {sortedGames.map((g, i) => (
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+              {sortedGames.map((g) => (
                 <tr
                   key={g.id}
-                  className={`cursor-pointer hover:bg-yellow-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  className="bg-white dark:bg-slate-900 hover:bg-amber-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"
                   onClick={() => navigate(`/games/${g.id}`)}
                 >
-                  <td className="px-3 py-2">{g.season ?? '-'}</td>
-                  <td className="px-3 py-2">{g.matchday ?? '-'}</td>
-                  <td className="px-3 py-2">{formatDate(g.game_date)}</td>
-                  <td className="px-3 py-2 font-medium">{g.home_team}</td>
-                  <td className="px-3 py-2 text-center font-bold">{g.score ?? '-'}</td>
-                  <td className="px-3 py-2 font-medium">{g.away_team}</td>
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{g.season ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{g.matchday ?? '-'}</td>
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{formatDate(g.game_date)}</td>
+                  <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">{g.home_team}</td>
+                  <td className="px-4 py-3 text-center font-bold text-slate-900 dark:text-slate-100">{g.score ?? '-'}</td>
+                  <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">{g.away_team}</td>
                 </tr>
               ))}
             </tbody>
