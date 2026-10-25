@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: .
+    env_file: .env
+    networks:
+      - app_network
+      - db_network
+    restart: always
+
+  nginx:
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  app_network:
+    driver: bridge
+  db_network:
+    external: true
+    name: raspberry_shared_network
