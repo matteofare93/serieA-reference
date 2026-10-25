@@ -1,5 +1,5 @@
 import os
-import threading
+from io import StringIO
 
 from ninja import Router
 from ninja.errors import HttpError
@@ -102,5 +102,9 @@ def trigger_update_games(request):
     auth_header = request.headers.get("Authorization", "")
     if not update_token or auth_header != f"Bearer {update_token}":
         raise HttpError(401, "Unauthorized")
-    threading.Thread(target=call_command, args=("update_games",), daemon=True).start()
-    return {"status": "update started"}
+    out = StringIO()
+    try:
+        call_command("update_games", stdout=out)
+        return {"status": "success", "details": out.getvalue()}
+    except Exception as e:
+        raise HttpError(500, str(e))
