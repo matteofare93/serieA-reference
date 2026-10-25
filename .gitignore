@@ -2,3 +2,6 @@
 *.xlsx
 *.pkl
 *.pyc
+.env
+*.ipynb_checkpoints
+__pycache__/
