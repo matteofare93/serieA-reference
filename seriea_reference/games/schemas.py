@@ -13,7 +13,7 @@ class GameSchema(Schema):
     home_team: str
     score: Optional[str] = None
     away_team: str
-    boxscore_link: str
+    boxscore_link: Optional[str] = None
 
 
 class GameDetailSchema(Schema):

@@ -105,7 +105,7 @@ export default function SearchPage() {
             type="submit"
             className="w-full bg-slate-900 hover:bg-slate-700 dark:bg-orange-600 dark:hover:bg-orange-500 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
           >
-            Cerca partite
+            Cerca
           </button>
         </form>
       </div>
