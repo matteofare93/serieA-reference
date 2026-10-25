@@ -20,7 +20,7 @@ const STAT_COLS = [
   { key: 'number',  label: '#', sticky: true },
   { key: 'player',  label: 'Giocatore', sticky: true, isPlayer: true },
   { key: 'points',              label: 'PTS' },
-  { key: 'minutes',             label: 'MIN', render: v => v != null ? Number(v).toFixed(2) : '-' },
+  { key: 'minutes',             label: 'MIN', render: v => v != null ? Number(v).toFixed(0) : '-' },
   { key: 'two_pts_made',        label: '2P' },
   { key: 'two_pts_attempted',   label: '2PA' },
   { key: 'two_pts_perc',        label: '2P%', render: v => v != null ? Number(v).toFixed(2) : '-' },
