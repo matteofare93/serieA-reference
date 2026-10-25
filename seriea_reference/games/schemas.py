@@ -2,6 +2,7 @@ from ninja import Schema, FilterSchema
 from typing import Optional
 from datetime import datetime
 from decimal import Decimal
+from pydantic import field_validator
 
 
 class GameSchema(Schema):
@@ -21,7 +22,7 @@ class GameDetailSchema(Schema):
     game_id: int
     team: Optional[str] = None
     starter: Optional[bool] = None
-    number: Optional[int] = None
+    number: Optional[str] = None
     player: Optional[str] = None
     points: Optional[int] = None
     minutes: Optional[Decimal] = None
@@ -48,6 +49,13 @@ class GameDetailSchema(Schema):
     league_rating: Optional[int] = None
     oer_rating: Optional[Decimal] = None
     plus_minus: Optional[int] = None
+
+    @field_validator('number', mode='before')
+    @classmethod
+    def normalize_number(cls, v):
+        if v is None:
+            return None
+        return '00' if v == 100 else str(v)
 
 
 class GameSummarySchema(Schema):
