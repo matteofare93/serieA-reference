@@ -6,7 +6,9 @@ function formatDate(dateStr) {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
   if (d.getFullYear() === 1900) return '-'
-  return d.toLocaleDateString('it-IT')
+  const date = d.toLocaleDateString('it-IT')
+  const time = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+  return `${date} ${time}`
 }
 
 function fmt(v) {
@@ -14,33 +16,33 @@ function fmt(v) {
   return v
 }
 
-const STICKY = 'sticky z-10'
+const STICKY = 'sticky z-10'  // body: sticky left
 const STICKY_COUNT = 2  // data, partita
 
 const STAT_COLS = [
-  { key: 'points',              label: 'Pts' },
-  { key: 'minutes',             label: 'Min', render: v => v != null ? Number(v).toFixed(2) : '-' },
+  { key: 'points',              label: 'PTS' },
+  { key: 'minutes',             label: 'MIN', render: v => v != null ? Number(v).toFixed(2) : '-' },
   { key: 'two_pts_made',        label: '2P' },
   { key: 'two_pts_attempted',   label: '2PA' },
   { key: 'two_pts_perc',        label: '2P%', render: v => v != null ? Number(v).toFixed(2) : '-' },
-  { key: 'dunks',               label: 'Sch' },
+  { key: 'dunks',               label: 'DNK' },
   { key: 'three_pts_made',      label: '3P' },
   { key: 'three_pts_attempted', label: '3PA' },
   { key: 'three_pts_perc',      label: '3P%', render: v => v != null ? Number(v).toFixed(2) : '-' },
-  { key: 'ft_made',             label: 'TL' },
-  { key: 'ft_attempted',        label: 'TLA' },
-  { key: 'ft_perc',             label: 'TL%', render: v => v != null ? Number(v).toFixed(2) : '-' },
-  { key: 'off_rebounds',        label: 'OR' },
-  { key: 'def_rebounds',        label: 'DR' },
-  { key: 'tot_rebounds',        label: 'TR' },
-  { key: 'blocks_given',        label: 'Blk+' },
-  { key: 'blocks_received',     label: 'Blk-' },
-  { key: 'turnovers',           label: 'PP' },
-  { key: 'steals',              label: 'PR' },
-  { key: 'assists',             label: 'Ast' },
+  { key: 'ft_made',             label: 'FT' },
+  { key: 'ft_attempted',        label: 'FTA' },
+  { key: 'ft_perc',             label: 'FT%', render: v => v != null ? Number(v).toFixed(2) : '-' },
+  { key: 'off_rebounds',        label: 'ORB' },
+  { key: 'def_rebounds',        label: 'DRB' },
+  { key: 'tot_rebounds',        label: 'TRB' },
+  { key: 'blocks_given',        label: 'BLK+' },
+  { key: 'blocks_received',     label: 'BLK-' },
+  { key: 'turnovers',           label: 'TOV' },
+  { key: 'steals',              label: 'STL' },
+  { key: 'assists',             label: 'AST' },
   { key: 'fouls_committed',     label: 'FC' },
-  { key: 'fouls_received',      label: 'FS' },
-  { key: 'league_rating',       label: 'Val' },
+  { key: 'fouls_received',      label: 'FD' },
+  { key: 'league_rating',       label: 'VAL' },
   { key: 'oer_rating',          label: 'OER', render: v => v != null ? Number(v).toFixed(2) : '-' },
   { key: 'plus_minus',          label: '+/-' },
 ]
@@ -53,6 +55,7 @@ export default function PlayerDetailPage() {
   const [error, setError] = useState(null)
   const [stickyLefts, setStickyLefts] = useState([])
   const [hoveredRow, setHoveredRow] = useState(null)
+  const [sortAsc, setSortAsc] = useState(true)
   const headerRefs = useRef([])
 
   const playerName = decodeURIComponent(name)
@@ -78,6 +81,12 @@ export default function PlayerDetailPage() {
   const getStickyStyle = (i) =>
     stickyLefts[i] !== undefined ? { left: stickyLefts[i] } : {}
 
+  const sortedRows = [...rows].sort((a, b) => {
+    const da = new Date(a.game?.game_date ?? 0)
+    const db = new Date(b.game?.game_date ?? 0)
+    return sortAsc ? da - db : db - da
+  })
+
   if (loading) return <p className="text-gray-500">Caricamento...</p>
   if (error) return <p className="text-red-500">{error}</p>
 
@@ -93,21 +102,28 @@ export default function PlayerDetailPage() {
       {rows.length === 0 && <p className="text-gray-500">Nessuna statistica trovata.</p>}
 
       {rows.length > 0 && (
-        <div className="overflow-x-auto rounded border border-gray-200">
+        <div className="rounded border border-gray-200 overflow-auto max-h-[75vh]">
           <table className="text-xs min-w-max">
             <thead className="bg-blue-800 text-white">
               <tr>
-                <th ref={el => { headerRefs.current[0] = el }} className={`px-2 py-2 text-left whitespace-nowrap bg-blue-800 ${STICKY}`} style={getStickyStyle(0)}>Data</th>
-                <th ref={el => { headerRefs.current[1] = el }} className={`px-2 py-2 text-left whitespace-nowrap bg-blue-800 ${STICKY}`} style={getStickyStyle(1)}>Partita</th>
-                <th className="px-2 py-2 text-center whitespace-nowrap">Tit</th>
-                <th className="px-2 py-2 text-center whitespace-nowrap">#</th>
+                <th
+                  ref={el => { headerRefs.current[0] = el }}
+                  className="px-2 py-2 text-left whitespace-nowrap bg-blue-800 sticky top-0 z-30 cursor-pointer select-none"
+                  style={getStickyStyle(0)}
+                  onClick={() => setSortAsc(v => !v)}
+                >
+                  Data {sortAsc ? '↑' : '↓'}
+                </th>
+                <th ref={el => { headerRefs.current[1] = el }} className="px-2 py-2 text-left whitespace-nowrap bg-blue-800 sticky top-0 z-30" style={getStickyStyle(1)}>Partita</th>
+                <th className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">Tit</th>
+                <th className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">#</th>
                 {STAT_COLS.map(col => (
-                  <th key={col.key} className="px-2 py-2 text-center whitespace-nowrap">{col.label}</th>
+                  <th key={col.key} className="px-2 py-2 text-center whitespace-nowrap sticky top-0 z-20 bg-blue-800">{col.label}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, i) => {
+              {sortedRows.map((row, i) => {
                 const isHovered = hoveredRow === row.id
                 const baseBg = i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                 const stickyBg = isHovered ? 'bg-yellow-100' : baseBg

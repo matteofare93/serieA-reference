@@ -6,7 +6,9 @@ function formatDate(dateStr) {
   if (!dateStr) return '-'
   const d = new Date(dateStr)
   if (d.getFullYear() === 1900) return '-'
-  return d.toLocaleDateString('it-IT')
+  const date = d.toLocaleDateString('it-IT')
+  const time = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+  return `${date} ${time}`
 }
 
 export default function GamesPage() {
@@ -67,16 +69,16 @@ export default function GamesPage() {
                 <th className="px-3 py-2 text-left">Stagione</th>
                 <th className="px-3 py-2 text-left">Giornata</th>
                 <th className="px-3 py-2 text-left">Data</th>
-                <th className="px-3 py-2 text-left">Casa</th>
+                <th className="px-3 py-2 text-left">Squadra di Casa</th>
                 <th className="px-3 py-2 text-center">Risultato</th>
-                <th className="px-3 py-2 text-left">Trasferta</th>
+                <th className="px-3 py-2 text-left">Squadra Ospite</th>
               </tr>
             </thead>
             <tbody>
               {games.map((g, i) => (
                 <tr
                   key={g.id}
-                  className={`cursor-pointer hover:bg-blue-50 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                  className={`cursor-pointer hover:bg-yellow-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                   onClick={() => navigate(`/games/${g.id}`)}
                 >
                   <td className="px-3 py-2">{g.season ?? '-'}</td>

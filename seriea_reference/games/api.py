@@ -48,7 +48,7 @@ def list_games(
         else:
             qs = qs.filter(Q(home_team__icontains=team_two) | Q(away_team__icontains=team_two))
 
-    return qs
+    return qs.order_by('game_date')
 
 
 @router.get("/games/{game_id}", response=GameSchema, tags=["games"])
@@ -88,4 +88,4 @@ def get_player_details(
     if season:
         qs = qs.filter(game__season=season)
 
-    return qs
+    return qs.order_by("game__game_date")

@@ -2,6 +2,15 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import client from '../api/client'
 
+function formatDate(dateStr) {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  if (d.getFullYear() === 1900) return '-'
+  const date = d.toLocaleDateString('it-IT')
+  const time = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+  return `${date} ${time}`
+}
+
 const STICKY = 'sticky z-10'
 const STICKY_COUNT = 4  // team, starter, number, player
 
@@ -31,8 +40,8 @@ const STAT_COLS = [
   { key: 'steals',              label: 'STL' },
   { key: 'assists',             label: 'AST' },
   { key: 'fouls_committed',     label: 'PF' },
-  { key: 'fouls_received',      label: 'FS' },
-  { key: 'league_rating',       label: 'Val' },
+  { key: 'fouls_received',      label: 'FD' },
+  { key: 'league_rating',       label: 'VAL' },
   { key: 'oer_rating',          label: 'OER', render: v => v != null ? Number(v).toFixed(2) : '-' },
   { key: 'plus_minus',          label: '+/-' },
 ]
@@ -94,7 +103,7 @@ export default function GameDetailPage() {
           <h1 className="text-2xl font-bold">
             {game.home_team} <span className="text-blue-700">{game.score}</span> {game.away_team}
           </h1>
-          <p className="text-gray-500 text-sm mt-1">{game.season} — {game.matchday}</p>
+          <p className="text-gray-500 text-sm mt-1">{game.season} — {game.matchday} - {formatDate(game.game_date)}</p>
         </div>
       )}
 
