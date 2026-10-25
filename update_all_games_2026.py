@@ -65,7 +65,6 @@ all_dfs = []
 
 session = build_session()
 year = datetime.datetime.now().year
-year = 2024
 
 # cs_id=1 filtra su campionato e playoff, escludendo coppe e supercoppe
 # cerco prima questa stagione, se siamo prima di settembre la risposta è vuota, cerco quella precedente
