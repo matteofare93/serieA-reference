@@ -23,7 +23,51 @@ class GameDetailSchema(Schema):
     starter: Optional[bool] = None
     number: Optional[int] = None
     player: Optional[str] = None
-    points: Optional[Decimal] = None
+    points: Optional[int] = None
+    minutes: Optional[Decimal] = None
+    fouls_committed: Optional[int] = None
+    fouls_received: Optional[int] = None
+    two_pts_made: Optional[int] = None
+    two_pts_attempted: Optional[int] = None
+    two_pts_perc: Optional[Decimal] = None
+    dunks: Optional[int] = None
+    three_pts_made: Optional[int] = None
+    three_pts_attempted: Optional[int] = None
+    three_pts_perc: Optional[Decimal] = None
+    ft_made: Optional[int] = None
+    ft_attempted: Optional[int] = None
+    ft_perc: Optional[Decimal] = None
+    def_rebounds: Optional[int] = None
+    off_rebounds: Optional[int] = None
+    tot_rebounds: Optional[int] = None
+    blocks_given: Optional[int] = None
+    blocks_received: Optional[int] = None
+    turnovers: Optional[int] = None
+    steals: Optional[int] = None
+    assists: Optional[int] = None
+    league_rating: Optional[int] = None
+    oer_rating: Optional[Decimal] = None
+    plus_minus: Optional[int] = None
+
+
+class GameSummarySchema(Schema):
+    id: int
+    season: Optional[str] = None
+    matchday: Optional[str] = None
+    game_date: Optional[datetime] = None
+    home_team: str
+    away_team: str
+    score: Optional[str] = None
+
+
+class PlayerGameDetailSchema(Schema):
+    id: int
+    game: GameSummarySchema
+    team: Optional[str] = None
+    starter: Optional[bool] = None
+    number: Optional[int] = None
+    player: Optional[str] = None
+    points: Optional[int] = None
     minutes: Optional[Decimal] = None
     fouls_committed: Optional[int] = None
     fouls_received: Optional[int] = None

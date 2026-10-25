@@ -4,7 +4,7 @@ from django.db.models import Q
 from typing import Optional, List
 
 from .models import Game, GameDetail
-from .schemas import GameSchema, GameDetailSchema
+from .schemas import GameSchema, GameDetailSchema, PlayerGameDetailSchema
 
 router = Router()
 
@@ -14,34 +14,39 @@ def list_games(
     request,
     season: Optional[str] = None,
     team: Optional[str] = None,
-    home_team: Optional[str] = None,
-    away_team: Optional[str] = None,
+    team_two: Optional[str] = None,
     only_home: bool = False,
     only_away: bool = False,
 ):
-    """
-    Lista partite con filtri opzionali.
-    - `team`: cerca il nome in home_team O away_team (case-insensitive)
-    - `only_home` / `only_away`: restringe la ricerca di `team` a home o away
-    """
     qs = Game.objects.all()
 
     if season:
         qs = qs.filter(season=season)
 
-    if team:
+    if team and team_two:
+        if only_home:
+            qs = qs.filter(home_team__icontains=team, away_team__icontains=team_two)
+        elif only_away:
+            qs = qs.filter(home_team__icontains=team_two, away_team__icontains=team)
+        else:
+            qs = qs.filter(
+                Q(home_team__icontains=team, away_team__icontains=team_two) |
+                Q(home_team__icontains=team_two, away_team__icontains=team)
+            )
+    elif team:
         if only_home:
             qs = qs.filter(home_team__icontains=team)
         elif only_away:
             qs = qs.filter(away_team__icontains=team)
         else:
             qs = qs.filter(Q(home_team__icontains=team) | Q(away_team__icontains=team))
-
-    if home_team:
-        qs = qs.filter(home_team__icontains=home_team)
-
-    if away_team:
-        qs = qs.filter(away_team__icontains=away_team)
+    elif team_two:
+        if only_home:
+            qs = qs.filter(home_team__icontains=team_two)
+        elif only_away:
+            qs = qs.filter(away_team__icontains=team_two)
+        else:
+            qs = qs.filter(Q(home_team__icontains=team_two) | Q(away_team__icontains=team_two))
 
     return qs
 
@@ -71,7 +76,7 @@ def list_seasons(request):
     )
 
 
-@router.get("/players/{player_name}/details", response=List[GameDetailSchema], tags=["players"])
+@router.get("/players/{player_name}/details", response=List[PlayerGameDetailSchema], tags=["players"])
 def get_player_details(
     request,
     player_name: str,
