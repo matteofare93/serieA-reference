@@ -1,0 +1,53 @@
+<head>
+  <title>Serie A Reference</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<style>
+p.ex1 {
+  margin: 35px;
+}
+</style>
+<div class="jumbotron">
+  <h1 class="display-4">{{game}}</h1>
+  <hr class="my-4">
+  <a href="{% url 'home' %}">Home</a></br>
+</div>
+
+<style>
+tr:hover {background-color:#F9FF33;}
+</style>
+
+<font size="3">
+<table style="width: 90%; margin: 35px; font-size:80%" id="myTable" border="1">
+	</tr>
+  	{% for row in df %}
+  	<tr>
+  		{% if forloop.counter0 == 0 %}
+  			{% for value in row %}
+  				<td style="text-align:center; background-color:#D7D7DB; color:#BF4956"><b>{{ value }}</b></td>
+  			{% endfor %}
+      {% elif row.3 == 'Totali' %}
+        {% for value in row %}
+          <td style="text-align:center; background-color:#D7D7DB;"><b>{{ value }}</b></td>
+        {% endfor %}
+  		{% else %}
+  			{% for value in row %}
+            {% if forloop.counter0 == 4 %}
+              <td style="text-align:center"><b>{{ value }}</b></td>
+            {% elif forloop.counter0 == 3 and value != 'Squadra' and value != 'Totali' %}
+              <td style="text-align:center"><a href="{% url 'player_details' %}?player={{value}}">{{ value }}</a></td>
+            {% else %}
+  					  <td style="text-align:center">{{ value }}</td>
+            {% endif %}
+  			{% endfor %}
+  		{% endif %}
+  	</tr>
+	{% endfor %}
+</table>
+</font>
