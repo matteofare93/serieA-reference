@@ -10,6 +10,7 @@ class Game(models.Model):
     score = models.CharField(max_length=100, null=True, blank=True)
     away_team = models.CharField(max_length=100)
     boxscore_link = models.TextField(unique=True)
+    legabasket_game_id = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'games'

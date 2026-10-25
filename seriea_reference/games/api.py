@@ -1,6 +1,11 @@
+import os
+import threading
+
 from ninja import Router
+from ninja.errors import HttpError
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.management import call_command
 from typing import Optional, List
 
 from .models import Game, GameDetail
@@ -89,3 +94,13 @@ def get_player_details(
         qs = qs.filter(game__season=season)
 
     return qs.order_by("game__game_date")
+
+
+@router.post("/internal/update-games", tags=["internal"])
+def trigger_update_games(request):
+    update_token = os.environ.get("UPDATE_TOKEN", "")
+    auth_header = request.headers.get("Authorization", "")
+    if not update_token or auth_header != f"Bearer {update_token}":
+        raise HttpError(401, "Unauthorized")
+    threading.Thread(target=call_command, args=("update_games",), daemon=True).start()
+    return {"status": "update started"}
