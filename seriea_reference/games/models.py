@@ -13,6 +13,7 @@ class Game(models.Model):
 
     class Meta:
         db_table = 'games'
+        managed = False
 
     def __str__(self):
         return f"{self.home_team} vs {self.away_team} ({self.season})"
@@ -53,6 +54,7 @@ class GameDetail(models.Model):
 
     class Meta:
         db_table = 'games_details'
+        managed = False
 
     def __str__(self):
         return f"{self.player} — {self.game}"

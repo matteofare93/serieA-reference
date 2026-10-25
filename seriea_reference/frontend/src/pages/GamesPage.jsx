@@ -11,12 +11,19 @@ function formatDate(dateStr) {
   return `${date} ${time}`
 }
 
+function SortIcon({ field, sortField, sortDir }) {
+  if (sortField !== field) return null
+  return <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>
+}
+
 export default function GamesPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [games, setGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [sortField, setSortField] = useState(null)
+  const [sortDir, setSortDir] = useState('asc')
 
   const season = searchParams.get('season')
   const team = searchParams.get('team')
@@ -46,6 +53,31 @@ export default function GamesPage() {
     onlyHome ? '(solo in casa)' : onlyAway ? '(solo in trasferta)' : '',
   ].filter(Boolean).join(' — ')
 
+  function handleSort(field) {
+    if (sortField === field) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDir('asc')
+    }
+  }
+
+  const sortedGames = [...games].sort((a, b) => {
+    if (!sortField) return 0
+    let va = a[sortField]
+    let vb = b[sortField]
+    if (sortField === 'game_date') {
+      va = va ? new Date(va).getTime() : 0
+      vb = vb ? new Date(vb).getTime() : 0
+    } else {
+      va = va ?? ''
+      vb = vb ?? ''
+    }
+    if (va < vb) return sortDir === 'asc' ? -1 : 1
+    if (va > vb) return sortDir === 'asc' ? 1 : -1
+    return 0
+  })
+
   return (
     <div>
       <div className="flex items-center gap-4 mb-4">
@@ -66,16 +98,26 @@ export default function GamesPage() {
           <table className="min-w-full text-sm">
             <thead className="bg-blue-800 text-white">
               <tr>
-                <th className="px-3 py-2 text-left">Stagione</th>
+                <th
+                  className="px-3 py-2 text-left cursor-pointer select-none hover:bg-blue-700"
+                  onClick={() => handleSort('season')}
+                >
+                  Stagione<SortIcon field="season" sortField={sortField} sortDir={sortDir} />
+                </th>
                 <th className="px-3 py-2 text-left">Giornata</th>
-                <th className="px-3 py-2 text-left">Data</th>
+                <th
+                  className="px-3 py-2 text-left cursor-pointer select-none hover:bg-blue-700"
+                  onClick={() => handleSort('game_date')}
+                >
+                  Data<SortIcon field="game_date" sortField={sortField} sortDir={sortDir} />
+                </th>
                 <th className="px-3 py-2 text-left">Squadra di Casa</th>
                 <th className="px-3 py-2 text-center">Risultato</th>
                 <th className="px-3 py-2 text-left">Squadra Ospite</th>
               </tr>
             </thead>
             <tbody>
-              {games.map((g, i) => (
+              {sortedGames.map((g, i) => (
                 <tr
                   key={g.id}
                   className={`cursor-pointer hover:bg-yellow-100 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}

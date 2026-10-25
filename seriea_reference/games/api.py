@@ -61,7 +61,7 @@ def get_game(request, game_id: int):
 def get_game_details(request, game_id: int):
     """Statistiche di tutti i giocatori di una partita."""
     get_object_or_404(Game, id=game_id)
-    return GameDetail.objects.filter(game_id=game_id)
+    return GameDetail.objects.filter(game_id=game_id).order_by("id")
 
 
 @router.get("/seasons", response=List[str], tags=["meta"])
