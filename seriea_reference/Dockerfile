@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -15,4 +15,4 @@ COPY . .
 # Collect static files (no DB needed, skip checks to avoid DB connectivity attempt)
 RUN SECRET_KEY=dummy-build-key DEBUG=False python manage.py collectstatic --noinput --skip-checks
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "seriea_reference.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-", "seriea_reference.wsgi:application"]
